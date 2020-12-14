@@ -22,13 +22,27 @@
 
 using System.Threading.Tasks;
 using Gigya.Common.Contracts.HttpService;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Schema;
 
 namespace CalculatorService.Interface
 {
+    public class ResponseWithSchema
+    {
+        public JToken JsonMessage  { get; set; }
+        public JSchema MessageSchema { get; set; }
+
+        public override string ToString() => JsonConvert.SerializeObject(this);
+    }
+    
 
     [HttpService(12323)]
     public interface ICalculatorService
     {
         Task<int> Add(int a, int b);
+
+        Task<ResponseWithSchema> GetResponse(string greeting);
+       
     }
 }

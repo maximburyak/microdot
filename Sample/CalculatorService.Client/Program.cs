@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using System.Threading.Tasks;
 using CalculatorService.Interface;
 using Gigya.Microdot.Common.Tests;
 using Gigya.Microdot.Hosting.Environment;
@@ -13,7 +14,7 @@ namespace CalculatorService.Client
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             try
             {
@@ -23,7 +24,12 @@ namespace CalculatorService.Client
                 {
                     //NLog.LogManager.GlobalThreshold = NLog.LogLevel.Info;
                     var calculatorService = microdotInitializer.Kernel.Get<ICalculatorService>();
-                    while (true)
+                    int sum = await calculatorService.Add(2, 3);
+                    var res = await calculatorService.GetResponse("foobar");
+
+                    Console.WriteLine(res.ToString());
+
+                    /*while (true)
                     {
                         try
                         {
@@ -36,8 +42,8 @@ namespace CalculatorService.Client
                             Console.WriteLine(e);
                             throw;
                         }
-                    }
-             
+                    }*/
+
                 }
             }
             catch (Exception ex)
