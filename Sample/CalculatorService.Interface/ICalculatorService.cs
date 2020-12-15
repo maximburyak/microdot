@@ -20,8 +20,10 @@
 // POSSIBILITY OF SUCH DAMAGE.
 #endregion
 
+using System;
 using System.Threading.Tasks;
 using Gigya.Common.Contracts.HttpService;
+using LanguageExt;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
@@ -35,6 +37,11 @@ namespace CalculatorService.Interface
 
         public override string ToString() => JsonConvert.SerializeObject(this);
     }
+
+    public class SomeResponse
+    {
+        public string Value { get; set; }
+    }
     
 
     [HttpService(12323)]
@@ -42,7 +49,7 @@ namespace CalculatorService.Interface
     {
         Task<int> Add(int a, int b);
 
-        Task<ResponseWithSchema> GetResponse(string greeting);
+        Task<Either<ResponseWithSchema, SomeResponse>> GetResponse(string greeting);
        
     }
 }
