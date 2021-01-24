@@ -4,7 +4,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Sockets;
-using System.Runtime.Remoting.Messaging;
 using System.Threading.Tasks;
 using FluentAssertions;
 
@@ -440,7 +439,7 @@ namespace Gigya.Microdot.UnitTests.ServiceProxyTests
 
                 //Disable  TracingContext.SetRequestID("1");
 
-                CallContext.FreeNamedDataSlot("#ORL_RC");
+                // CallContext.FreeNamedDataSlot("#ORL_RC"); breaking change of shouldly
 
                 string overrideHost = "override-host";
                 int overridePort = 5318;
@@ -502,7 +501,7 @@ namespace Gigya.Microdot.UnitTests.ServiceProxyTests
 
                 //Disable  TracingContext.SetRequestID("1");
 
-                CallContext.FreeNamedDataSlot("#ORL_RC");
+         //       CallContext.FreeNamedDataSlot("#ORL_RC"); breaking change of shouldly
 
                 var request = new HttpServiceRequest("testMethod", null, new Dictionary<string, object>());
 
