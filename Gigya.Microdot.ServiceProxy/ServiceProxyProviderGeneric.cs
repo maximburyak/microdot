@@ -28,6 +28,7 @@ using Gigya.Common.Contracts.HttpService;
 using Gigya.Microdot.SharedLogic;
 using Gigya.Microdot.SharedLogic.HttpService;
 using Gigya.Microdot.System_Reflection.DispatchProxy;
+using DispatchProxy = Gigya.Microdot.System_Reflection.DispatchProxy.DispatchProxy;
 
 namespace Gigya.Microdot.ServiceProxy
 {

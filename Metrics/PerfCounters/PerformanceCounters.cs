@@ -113,6 +113,9 @@ namespace Metrics.PerfCounters
 
         private static string GetIdentity()
         {
+            throw new NotImplementedException("Not Implemented yet as part of port to .net 5");
+            
+            /*
             try
             {
                 return WindowsIdentity.GetCurrent().Name;
@@ -120,7 +123,7 @@ namespace Metrics.PerfCounters
             catch (Exception x)
             {
                 return "[Unknown user | " + x.Message + " ]";
-            }
+            }*/
         }
 
         private static void WrappedRegister(MetricsContext context, string name, Unit unit,
@@ -128,7 +131,8 @@ namespace Metrics.PerfCounters
             Func<double, double> derivate = null,
             MetricTags tags = default(MetricTags))
         {
-            log.Debug(() => $"Registering performance counter [{counter}] in category [{category}] for instance [{instance ?? "none"}]");
+            throw new NotImplementedException("Not Implemented yet as part of port to .net 5");
+            /*log.Debug(() => $"Registering performance counter [{counter}] in category [{category}] for instance [{instance ?? "none"}]");
 
             if (PerformanceCounterCategory.Exists(category))
             {
@@ -153,7 +157,7 @@ namespace Metrics.PerfCounters
             if (!isMono)
             {
                 log.ErrorFormat("Performance counter does not exist [{0}] in category [{1}] for instance [{2}]", counter, category, instance ?? "none");
-            }
+            }*/
         }
     }
 }

@@ -7,7 +7,7 @@ namespace Metrics.PerfCounters
 {
     public class PerformanceCounterGauge : MetricValueProvider<double>
     {
-        private readonly PerformanceCounter performanceCounter;
+    //    private readonly PerformanceCounter performanceCounter;
 
         public PerformanceCounterGauge(string category, string counter)
             : this(category, counter, instance: null)
@@ -15,7 +15,8 @@ namespace Metrics.PerfCounters
 
         public PerformanceCounterGauge(string category, string counter, string instance)
         {
-            try
+            throw new NotImplementedException("Not Implemented yet as part of port to .net 5");
+            /*try
             {
                 this.performanceCounter = instance == null ?
                     new PerformanceCounter(category, counter, true) :
@@ -27,7 +28,7 @@ namespace Metrics.PerfCounters
                 var message = "Error reading performance counter data. The application is currently running as user " + GetIdentity() +
                     ". Make sure the user has access to the performance counters. The user needs to be either Admin or belong to Performance Monitor user group.";
                 MetricsErrorHandler.Handle(x, message);
-            }
+            }*/
         }
 
         private static string GetIdentity()
@@ -51,6 +52,9 @@ namespace Metrics.PerfCounters
         {
             get
             {
+                throw new NotImplementedException("Not Implemented yet as part of port to .net 5");
+                
+                /*
                 try
                 {
                     return this.performanceCounter?.NextValue() ?? double.NaN;
@@ -61,7 +65,7 @@ namespace Metrics.PerfCounters
                         ". Make sure the user has access to the performance counters. The user needs to be either Admin or belong to Performance Monitor user group.";
                     MetricsErrorHandler.Handle(x, message);
                     return double.NaN;
-                }
+                }*/
             }
         }
     }

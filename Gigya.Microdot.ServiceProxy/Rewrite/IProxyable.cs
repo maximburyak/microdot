@@ -22,6 +22,7 @@
 
 using Gigya.Microdot.System_Reflection.DispatchProxy;
 using System.Reflection;
+using DispatchProxy = Gigya.Microdot.System_Reflection.DispatchProxy.DispatchProxy;
 
 namespace Gigya.Microdot.ServiceProxy.Rewrite
 {

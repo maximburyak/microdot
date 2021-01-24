@@ -1,13 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyTitle>Gigya.ServiceContract</AssemblyTitle>
     <Company>Gigya</Company>
     <Product>Gigya.ServiceContract</Product>
     <Copyright>© 2017 Gigya Inc.</Copyright>
-    <Version>2.7.6</Version>
-    <AssemblyVersion>2.7.6</AssemblyVersion>
-    <FileVersion>2.7.6</FileVersion>
+    <Version>3.7.6</Version>
+    <AssemblyVersion>3.7.6</AssemblyVersion>
+    <FileVersion>3.7.6</FileVersion>
+    <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
   <Import Project=".paket\Paket.Restore.targets" />
 </Project>
