@@ -28,9 +28,11 @@ namespace Gigya.Microdot.SharedLogic.Measurement.Workload
         /// </summary>
         public CpuTotalAssignedCoresCounter(Process p)
         {
-            _counters = new List<PerformanceCounter>(2 /* reasonable for a service with an affinity */);
-            foreach (var index in p.ProcessorAffinityList())
-                _counters.Add(new PerformanceCounter("Processor", "% Processor Time", $"{index}"));
+            throw new NotImplementedException("Not Implemented yet as part of port to .net 5");
+
+            //_counters = new List<PerformanceCounter>(2 /* reasonable for a service with an affinity */);
+            //foreach (var index in p.ProcessorAffinityList())
+            //    _counters.Add(new PerformanceCounter("Processor", "% Processor Time", $"{index}"));
         }
 
         /// <summary>
@@ -40,7 +42,8 @@ namespace Gigya.Microdot.SharedLogic.Measurement.Workload
         {
             try
             {
-                return Math.Round(_counters.Sum(c => c.NextValue()) / _counters.Count, 2);
+                throw new NotImplementedException("Not Implemented yet as part of port to .net 5");
+                //return Math.Round(_counters.Sum(c => c.NextValue()) / _counters.Count, 2);
             }
             catch
             {

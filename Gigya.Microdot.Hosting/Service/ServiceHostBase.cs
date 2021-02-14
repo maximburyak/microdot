@@ -109,15 +109,18 @@ namespace Gigya.Microdot.Hosting.Service
 
             if (Arguments.ServiceStartupMode == ServiceStartupMode.WindowsService)
             {
-                Trace.WriteLine("Service starting as a Windows service...");
-                WindowsService = new DelegatingServiceBase(ServiceName, OnWindowsServiceStart, OnWindowsServiceStop);
+                throw new NotImplementedException("Not Implemented yet as part of port to .net 5");
 
-                if (argumentsOverride == null)
-                    Arguments = null; // Ensures OnWindowsServiceStart reloads parameters passed from Windows Service Manager.
+                //Trace.WriteLine("Service starting as a Windows service...");
+                //WindowsService = new DelegatingServiceBase(ServiceName, OnWindowsServiceStart, OnWindowsServiceStop);
 
-                ServiceBase.Run(WindowsService); // This calls OnWindowsServiceStart() on a different thread and blocks until the service stops.
+                //if (argumentsOverride == null)
+                //    Arguments = null; // Ensures OnWindowsServiceStart reloads parameters passed from Windows Service Manager.
+
+                //ServiceBase.Run(WindowsService); // This calls OnWindowsServiceStart() on a different thread and blocks until the service stops.
             }
-            else if (Arguments.ServiceStartupMode == ServiceStartupMode.VerifyConfigurations)
+            else 
+            if (Arguments.ServiceStartupMode == ServiceStartupMode.VerifyConfigurations)
             {
                 OnVerifyConfiguration();
             }
@@ -332,51 +335,54 @@ namespace Gigya.Microdot.Hosting.Service
 
         private void OnWindowsServiceStart(string[] args)
         {
-            if (Arguments == null)
-            {
-                Arguments = new ServiceArguments(args);
-            }
+            throw new NotImplementedException("Not Implemented yet as part of port to .net 5");
+            //if (Arguments == null)
+            //{
+            //    Arguments = new ServiceArguments(args);
+            //}
 
-            try
-            {
-                if (Arguments.ServiceStartupMode != ServiceStartupMode.WindowsService)
-                    throw new InvalidOperationException($"Cannot start in {Arguments.ServiceStartupMode} mode when starting as a Windows service.");
+            //try
+            //{
+            //    if (Arguments.ServiceStartupMode != ServiceStartupMode.WindowsService)
+            //        throw new InvalidOperationException($"Cannot start in {Arguments.ServiceStartupMode} mode when starting as a Windows service.");
 
-                if (System.Environment.UserInteractive == false)
-                {
-                    throw new InvalidOperationException(
-                        "This Windows service requires to be run with 'user interactive' enabled to correctly read certificates. " +
-                        "Either the service wasn't configure with the 'Allow service to interact with desktop' option enabled " +
-                        "or the OS is ignoring the checkbox due to a registry settings. " +
-                        "Make sure both the checkbox is checked and following registry key is set to DWORD '0':\n" +
-                        @"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Windows\NoInteractiveServices");
-                }
+            //    if (System.Environment.UserInteractive == false)
+            //    {
+            //        throw new InvalidOperationException(
+            //            "This Windows service requires to be run with 'user interactive' enabled to correctly read certificates. " +
+            //            "Either the service wasn't configure with the 'Allow service to interact with desktop' option enabled " +
+            //            "or the OS is ignoring the checkbox due to a registry settings. " +
+            //            "Make sure both the checkbox is checked and following registry key is set to DWORD '0':\n" +
+            //            @"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Windows\NoInteractiveServices");
+            //    }
 
-                WindowsService.RequestAdditionalTime(60000);
+            //    WindowsService.RequestAdditionalTime(60000);
 
-                OnStart();
-            }
-            catch
-            {
-                WindowsService.ExitCode = 1064; // "An exception occurred in the service when handling the control request." (net helpmsg 1064)
-                throw;
-            }
+            //    OnStart();
+            //}
+            //catch
+            //{
+            //    WindowsService.ExitCode = 1064; // "An exception occurred in the service when handling the control request." (net helpmsg 1064)
+            //    throw;
+            //}
         }
 
 
         private void OnWindowsServiceStop()
         {
-            WindowsService.RequestAdditionalTime(60000);
+            throw new NotImplementedException("Not Implemented yet as part of port to .net 5");
 
-            try
-            {
-                OnStop();
-            }
-            catch
-            {
-                WindowsService.ExitCode = 1064; // "An exception occurred in the service when handling the control request." (net helpmsg 1064)
-                throw;
-            }
+            //WindowsService.RequestAdditionalTime(60000);
+
+            //try
+            //{
+            //    OnStop();
+            //}
+            //catch
+            //{
+            //    WindowsService.ExitCode = 1064; // "An exception occurred in the service when handling the control request." (net helpmsg 1064)
+            //    throw;
+            //}
 
         }
 
@@ -423,15 +429,17 @@ namespace Gigya.Microdot.Hosting.Service
 
         private class DelegatingServiceBase : ServiceBase
         {
+
             private readonly Action<string[]> _onStart;
             private readonly Action _onStop;
 
 
             public DelegatingServiceBase(string serviceName, Action<string[]> onStart, Action onStop)
             {
-                ServiceName = serviceName; // Required for auto-logging to event viewer of start/stop event and exceptions.
-                _onStart = onStart;
-                _onStop = onStop;
+                throw new NotImplementedException("Not Implemented yet as part of port to .net 5");
+                //ServiceName = serviceName; // Required for auto-logging to event viewer of start/stop event and exceptions.
+                //_onStart = onStart;
+                //_onStop = onStop;
             }
 
 

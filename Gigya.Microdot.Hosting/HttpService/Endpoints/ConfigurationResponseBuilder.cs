@@ -23,7 +23,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Net;
@@ -131,7 +130,7 @@ namespace Gigya.Microdot.Hosting.HttpService.Endpoints
             {
                 sb.AppendLine($"{configItem.Key} = {ToCSharpStringLiteral(configItem.Value.Value)} [{configItem.Value.File}] [{(configItem.Value.UsedAs != null ? "USED" : "UNUSED")}]");
 
-                foreach (var overrideInfo in configItem.Value.Overridden ?? new ConfigEntry[0])
+                foreach (var overrideInfo in configItem.Value.Overridden ?? Array.Empty<ConfigEntry>())
                     sb.AppendLine($"{"".PadRight(configItem.Key.Length - 3)} ~~~> {ToCSharpStringLiteral(overrideInfo.Value)} [{overrideInfo.File}] [{(overrideInfo.UsedAs != null ? "USED" : "UNUSED")}]");
             }
 
@@ -183,14 +182,14 @@ namespace Gigya.Microdot.Hosting.HttpService.Endpoints
         }
 
 
-        private string GetVersion(Assembly assembly)
+        private static string GetVersion(Assembly assembly)
         {
-            string assemblyVersion = assembly.GetName().Version.ToString();
+            string assemblyVersion = assembly.GetName().Version?.ToString();
 
             try
             {
                 string productVersion = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
-                if (productVersion != null && assemblyVersion != productVersion && assemblyVersion.StartsWith(productVersion) == false)
+                if (productVersion != null && assemblyVersion != productVersion && assemblyVersion?.StartsWith(productVersion) == false)
                     return $"{assemblyVersion} ({productVersion})";
             }
             catch
@@ -220,7 +219,7 @@ namespace Gigya.Microdot.Hosting.HttpService.Endpoints
                 { "ProcessorCount", System.Environment.ProcessorCount.ToString() },
                 { "UserInteractive", System.Environment.UserInteractive.ToString() },
                 { "ClrVersion", System.Environment.Version.ToString() },
-                { "CurrentProcessId", Process.GetCurrentProcess().Id.ToString() },
+                { "CurrentProcessId", System.Environment.ProcessId.ToString() },
                 { "CurrentCulture", CultureInfo.CurrentCulture.ToString() },
                 { "CurrentUICulture", CultureInfo.CurrentUICulture.ToString() },
                 { "IsServerGC", GCSettings.IsServerGC.ToString() },
