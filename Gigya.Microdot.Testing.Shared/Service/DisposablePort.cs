@@ -13,9 +13,9 @@ namespace Gigya.Microdot.Testing.Shared.Service
     {
         public readonly int Port;
         private readonly List<Semaphore> _semaphores = new List<Semaphore>(4);
-        private static ConcurrentDictionary<Semaphore, DateTime> portMaintainer = new ConcurrentDictionary<Semaphore, DateTime>();
+        private static readonly ConcurrentDictionary<Semaphore, DateTime> PortMaintainer = new ConcurrentDictionary<Semaphore, DateTime>();
 
-        internal DisposablePort(int port)
+        private DisposablePort(int port)
         {
             Port = port;
         }
@@ -26,7 +26,7 @@ namespace Gigya.Microdot.Testing.Shared.Service
             {
                 try
                 {
-                    portMaintainer.TryRemove(x, out _);
+                    PortMaintainer.TryRemove(x, out _);
                     x.Dispose();
                 }
                 catch (Exception ex)
@@ -38,7 +38,7 @@ namespace Gigya.Microdot.Testing.Shared.Service
             Console.WriteLine($"Disposed port sequence: {Port}");
         }
 
-        public static HashSet<int> Occupied()
+        private static HashSet<int> Occupied()
         {
             var ipGlobal = IPGlobalProperties.GetIPGlobalProperties();
             var occupied = new List<int>();
@@ -60,7 +60,7 @@ namespace Gigya.Microdot.Testing.Shared.Service
         /// <param name="rangeFrom">Min value of port</param>
         /// <param name="rangeTo">Max value of port</param>
         /// <param name="sequence">How many ports sequentially we need to allocate</param>
-        public static DisposablePort GetPort(int retries, int rangeFrom, int rangeTo, int sequence)
+        private static DisposablePort GetPort(int retries, int rangeFrom, int rangeTo, int sequence)
         {
             uint totalNewSemExceptions = 0u;
             var sw = Stopwatch.StartNew();
@@ -72,11 +72,11 @@ namespace Gigya.Microdot.Testing.Shared.Service
 
                 var randomPort = random.Next(rangeFrom, rangeTo);
 
-                // Check the every port in the sequence isn't occupoed
+                // Check the every port in the sequence isn't occupied
                 bool freeRange = true;
                 for (int port = randomPort; port < randomPort + sequence; port++)
                 {
-                    freeRange = freeRange && !occupiedPorts.Contains(port);
+                    freeRange = !occupiedPorts.Contains(port);
                     if (!freeRange)
                         break;
                 }
@@ -94,29 +94,47 @@ namespace Gigya.Microdot.Testing.Shared.Service
                     for (int port = randomPort; port < randomPort + sequence; port++)
                     {
                         var name = $"ServiceTester-{port}";
-                        if (Semaphore.TryOpenExisting(name, out var _))
+
+                        //if (Semaphore.TryOpenExisting(name, out var _))
+                        //{
+                        //    someOneElseWantThisPort = true;
+                        //}
+                        //else
+                        //{
+                        //    try
+                        //    {
+                        //        var item = new Semaphore(1, 1, name);
+                        //        result._semaphores.Add(item);
+                        //        PortMaintainer.TryAdd(item, DateTime.UtcNow);
+                        //        if (port == randomPort)
+                        //        {
+                        //            IsHttpSysLocked(port);
+                        //        }
+                        //    }
+                        //    catch (Exception e)
+                        //    {
+                        //        Console.WriteLine($"Failed to create semaphore for port: {port}, Exception: " + e.Message);
+                        //        someOneElseWantThisPort = true;
+                        //        totalNewSemExceptions++;
+                        //        result.Dispose(); // also freeing already created semaphores
+                        //    }
+                        //}
+                        try
                         {
-                            someOneElseWantThisPort = true;
+                            var item = new Semaphore(1, 1, name);
+                            result._semaphores.Add(item);
+                            PortMaintainer.TryAdd(item, DateTime.UtcNow);
+                            if (port == randomPort)
+                            {
+                                IsHttpSysLocked(port);
+                            }
                         }
-                        else
+                        catch (Exception e)
                         {
-                            try
-                            {
-                                var item = new Semaphore(1, 1, name);
-                                result._semaphores.Add(item);
-                                portMaintainer.TryAdd(item, DateTime.UtcNow);
-                                if (port == randomPort)
-                                {
-                                    IsHttpSysLocked(port);
-                                }
-                            }
-                            catch (Exception e)
-                            {
-                                Console.WriteLine($"Failed to create semaphore for port: {port}, Exception: " + e.Message);
-                                someOneElseWantThisPort = true;
-                                totalNewSemExceptions++;
-                                result.Dispose(); // also freeing already created semaphores
-                            }
+                            Console.WriteLine($"Failed to create semaphore for port: {port}, Exception: " + e.Message);
+                            someOneElseWantThisPort = true;
+                            totalNewSemExceptions++;
+                            result.Dispose(); // also freeing already created semaphores
                         }
                     }
 
@@ -127,7 +145,7 @@ namespace Gigya.Microdot.Testing.Shared.Service
                         Console.WriteLine($"Service Tester found a free port: {randomPort}. " +
                                           $"After retries: {retry}. " +
                                           $"Initially occupied ports: {occupiedPorts.Count}. " +
-                                          $"Port maintainer contains: {portMaintainer.Count}. " +
+                                          $"Port maintainer contains: {PortMaintainer.Count}. " +
                                           $"New semaphore exceptions: {totalNewSemExceptions}. " +
                                           $"Total elapsed, ms: {sw.ElapsedMilliseconds}");
                         return result;
@@ -138,27 +156,27 @@ namespace Gigya.Microdot.Testing.Shared.Service
             throw new Exception($"Can't find free port in range: [{rangeFrom}-{rangeTo}]." +
                                 $"Retries: {retries}. " +
                                 $"Currently occupied ports: {Occupied().Count}. " +
-                                $"Port maintainer contains: {portMaintainer.Count}. " +
+                                $"Port maintainer contains: {PortMaintainer.Count}. " +
                                 $"New semaphore exceptions: {totalNewSemExceptions}. " +
                                 $"Total elapsed, ms: {sw.ElapsedMilliseconds}." +
-                                $"Process id: {Process.GetCurrentProcess().Id}");
+                                $"Process id: {Environment.ProcessId}");
         }
 
         private static void IsHttpSysLocked(int port, bool https = false)
         {
             var urlPrefixTemplate = https ? "https://+:{0}/" : "http://+:{0}/";
-            var Prefix = string.Format(urlPrefixTemplate, port);
+            var prefix = string.Format(urlPrefixTemplate, port);
 
-            var Listener = new System.Net.HttpListener
+            var listener = new System.Net.HttpListener
             {
                 IgnoreWriteExceptions = true,
-                Prefixes = { Prefix }
+                Prefixes = { prefix }
             };
 
-            Listener.Start();
+            listener.Start();
 
             Thread.SpinWait(1);
-            Listener.Stop();
+            listener.Stop();
 
         }
     }
